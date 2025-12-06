@@ -3,7 +3,7 @@
 
 ## End-to-End SQL • Data Modeling • ETL • Analytics • Tableau Dashboard ##
 
-   ### 📁 Project Overview ###
+### 📁 Project Overview ###
     This project is an end-to-end data analytics workflow built using TheLook Ecommerce dataset.
 
     It covers every stage of the analytics lifecycle:
@@ -14,6 +14,11 @@
         5.	Creating an interactive Tableau Dashboard (upcoming)
 
     This project demonstrates SQL proficiency, analytical thinking, and dashboard-building skills—all essential for Data Analyst roles.
+
+### Business Objective
+    The goal of this analysis is to support business decision-making for an e-commerce company by answering key questions related to customer behavior, revenue performance, product trends, and order fulfillment. This project assumes the role of a Data Analyst working with internal e-commerce data to provide actionable insights for stakeholders such as Marketing, Operations, and Leadership teams.
+    Note: This is an ongoing project, and insights and dashboards will be expanded as the analysis progresses.
+
 ### 🛠 Tools & Technologies ###
         •	SQL (PostgreSQL / BigQuery)
         •	Excel (for initial checks & cleaning)

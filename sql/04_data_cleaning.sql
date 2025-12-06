@@ -6,14 +6,14 @@ SELECT
 FROM 
 	clean.users_base
 WHERE 
-	user_id = NULL 
+	order_id = NULL 
 
 --PRIMARY KEY duplicates check 
 SELECT 
-	user_id
-FROM 
-	clean.users_base
-GROUP BY user_id
+	order_id
+FROM
+	clean.orders_base
+GROUP BY order_id
 HAVING COUNT(*) > 1
 
 --Identifying dupllicate users
@@ -49,5 +49,37 @@ DELETE FROM
 WHERE 
 	email = 'taylorreed@example.net' AND age = 38
 
+--Chaking for missing or NULL values
+SELECT
+	*
+FROM 
+	clean.users_base AS u
+WHERE created_at is NULL 
 
+-- Email  validation
+SELECT 
+	email
+FROM 
+	clean.users_base
+WHERE 
+	email LIKE '%_@__%.__%'
 
+-- Gender field validation
+SELECT 
+	*
+FROM 
+	clean.users_base
+WHERE 
+	gender IN ('M', 'F','Other')
+
+SELECT *
+FROM clean.users_base
+WHERE postal_code !~ '^[0-9]+$';
+
+--Cleaning/data validation process for orders_base table
+SELECT 
+	*
+FROM 
+	clean.orders_base
+WHERE 
+	status NOT IN ('Shipped', 'Delivered','Processing','Cancelled','complete')
