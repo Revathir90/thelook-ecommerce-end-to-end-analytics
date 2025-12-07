@@ -26,12 +26,18 @@ WITH subset_users AS (
   ON subset_orders.order_id = oi.order_id
   LIMIT 1000)
 
+  SELECT 
+      p.*
+    FROM 
+      subset_order_items
+    JOIN 
+      bigquery-public-data.thelook_ecommerce.products AS p
+    ON subset_order_items.product_id = p.id
+    LIMIT 1000
+
+
 SELECT 
-  p.*
-  FROM 
-   subset_order_items
-  JOIN 
-    bigquery-public-data.thelook_ecommerce.products AS p
-  ON subset_order_items.product_id = p.id
-  LIMIT 1000
+  *
+FROM 
+  bigquery-public-data.thelook_ecommerce.distribution_centers
   
