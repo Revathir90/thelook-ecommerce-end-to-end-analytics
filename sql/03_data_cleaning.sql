@@ -4,7 +4,7 @@ SELECT
 FROM 
 	clean.users_base 
 WHERE 
-	order_id = NULL 
+	city IS NULL
 
 --PRIMARY KEY duplicates check 
 SELECT 
@@ -16,6 +16,7 @@ HAVING COUNT(*) > 1
 
 --"clean.users_base" table data cleaning
 
+--1. Duplicate check
 --Identifying dupllicate users
 SELECT 
 	first_name, 
@@ -49,7 +50,7 @@ DELETE FROM
 WHERE 
 	email = 'taylorreed@example.net' AND age = 38
 
---Checking for missing or NULL values
+--2. Checking for missing or NULL values 
 SELECT
 	*
 FROM 
@@ -60,27 +61,34 @@ WHERE
 	city IN ('', 'N/A', 'na', 'unknown', 'null') OR
 	state IN ('', 'N/A', 'na', 'unknown', 'null') OR
 	country IN ('', 'N/A', 'na', 'unknown', 'null')
-	
+
 SELECT
-  SUM(CASE WHEN first_name ILIKE 'null' THEN 1 ELSE 0 END) AS first_name_null_count,
-  SUM(CASE WHEN last_name ILIKE 'null' THEN 1 ELSE 0 END) AS last_name_null_count,
-  SUM(CASE WHEN city ILIKE 'null' THEN 1 ELSE 0 END) AS city_null_strings,
-  SUM(CASE WHEN state ILIKE 'null' THEN 1 ELSE 0 END) AS state_null_strings,
-  SUM(CASE WHEN country ILIKE 'null' THEN 1 ELSE 0 END) AS country_null_strings
+  SUM(CASE WHEN first_name ILIKE 'null' THEN 1 ELSE 0 END) AS first_name_null_count, --count=0
+  SUM(CASE WHEN last_name ILIKE 'null' THEN 1 ELSE 0 END) AS last_name_null_count, --count=0 
+  SUM(CASE WHEN city ILIKE 'null' THEN 1 ELSE 0 END) AS city_null_strings, --count=27
+  SUM(CASE WHEN state ILIKE 'null' THEN 1 ELSE 0 END) AS state_null_strings, --count=0
+  SUM(CASE WHEN country ILIKE 'null' THEN 1 ELSE 0 END) AS country_null_strings --count=0
 FROM clean.users_base;
 
-SELECT DISTINCT city
-FROM clean.users_base
-Order BY city ASC
+--Updating the string nulls to real SQL NULL values
+UPDATE clean.users_base
+SET city = NULL
 WHERE city ILIKE 'null';
 
+--Verifying the actual NULL count result with the before update count,
+--And query result matches with the previous count 27)
+SELECT COUNT(*)
+FROM clean.users_base
+WHERE city is NULL;
+
+--3. Format/data completeness/domain validation checks
 -- Email  validation
 SELECT 
 	email
 FROM 
 	clean.users_base
 WHERE 
-	email LIKE '%_@__%.__%'
+	email NOT LIKE '%_@__%.__%'
 
 -- Gender field validation
 SELECT 
@@ -88,26 +96,25 @@ SELECT
 FROM 
 	clean.users_base
 WHERE 
-	gender IN ('M', 'F','Other')
+	gender NOT IN ('M', 'F')
 	
---postal code check and standardizing the postal code without extended/supplemental code
+--postal code check
 SELECT *
 FROM clean.users_base
-WHERE postal_code !~ '^[0-9]+$';
+WHERE postal_code !~ '^[0-9]+$'; -- Found postal codes with extended code. Total count 151
 
+--Checking postal codes with extension for Japan
 SELECT *
 FROM clean.users_base
-WHERE POSITION('-' IN postal_code) > 0;
+WHERE POSITION('-' IN postal_code) < 5 AND POSITION('-' IN postal_code) > 0; -- Japan 6 
 
-UPDATE clean.users_base
-SET postal_code = SPLIT_PART(postal_code, '-', 1)
-WHERE postal_code LIKE '%-%';
-
+-- Updaing the postal code with base format other than Japan 
 UPDATE clean.users_base
 SET postal_code = SPLIT_PART(postal_code, '-', 1)
 WHERE postal_code LIKE '%-%'
-  AND country <> 'Japan';
-
+  AND country <> 'Japan'; -- Updated record/row count 151 - 6 = 145
+  
+-- clean.orders_base table
 --Cleaning/data validation process for orders_base table
 SELECT 
 	*
@@ -115,3 +122,4 @@ FROM
 	clean.orders_base
 WHERE 
 	status NOT IN ('Shipped', 'Delivered','Processing','Cancelled','Complete','Returned')
+
