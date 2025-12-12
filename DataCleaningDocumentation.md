@@ -1,15 +1,15 @@
-## 1. Table Name ##
-**clean.users_base**
-## 2. Overview ##
+## Table Name ##
+### **_1. clean.users_base_**
+## Overview ##
 This table stores user profile information such as user_id, name (first and last), age, email, demographics, and location. 
     Cleaning ensures data consistency and removes duplicate or incorrect records.
-## 3. Before Cleaning Summary ##
+## Before Cleaning Summary ##
 Total number of records (rows) before cleaning: 645 <br>
 Number of duplicate records found: 2 **(email based duplication)** <br>
 Number of rows with missing values: 27 **(NULL values in city field)** <br>
 Other issues identified: **Inconsistent postal code** format (with and without extended codes)
 
-## 4. Cleaning Steps & Rules Used
+## Cleaning Steps & Rules Used
 
 ### **Duplicate Records**
 
@@ -85,3 +85,23 @@ For other countries where the suffix did not add analytical value, postal codes 
 
 **Updated Rows Count:** 151 - 6 = 145
 
+
+### **_2. clean.orders_base_**
+## Overview 
+The clean.orders_base table contains order-level descriptive information related to each customer order, such as order status, timestamps, and fulfillment-related attributes. It is used as a supporting dimension that provides contextual order details to downstream fact tables.
+
+The table is linked to users and order items through unique identifiers and does not store payment or transaction-level metrics.<br>
+
+**Data Source Considerations:**<br>
+The dataset was sourced from BigQuery (TheLook Ecommerce). Attribute completeness and category representation were validated during analysis. Where source-level limitations were identified, alternative dimension tables were used and limitations were documented.
+
+**Orders Table Sanity Check**
+User-level order counts were computed to validate completeness and consistency. No missing user_ids or anomalous counts were observed.
+
+    -- orders_base Table Sanity Check
+    SELECT user_id, COUNT(num_of_item) AS order_count
+    FROM clean.orders_base
+    GROUP BY user_id
+    ORDER BY order_count DESC
+
+The status column contains 5 distinct, valid values: 'Processing', 'Shipped', 'Complete', 'Returned', and 'Cancelled'. All order_ids are unique, and no null or abnormal values were detected. This confirms that the table is structurally clean and ready for analysis.

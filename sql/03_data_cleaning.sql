@@ -2,19 +2,19 @@
 SELECT 
 	* 
 FROM 
-	clean.users_base 
+	clean.orders_base 
 WHERE 
 	city IS NULL
 
 --PRIMARY KEY duplicates check 
 SELECT 
-	user_id
+	order_id
 FROM
-	clean.users_base
+	clean.orders_base
 GROUP BY order_id
-HAVING COUNT(*) > 1
+HAVING COUNT(*) > 1;
 
---"clean.users_base" table data cleaning
+--"clean.users_base" table data validation
 
 --1. Duplicate check
 --Identifying dupllicate users
@@ -113,13 +113,27 @@ UPDATE clean.users_base
 SET postal_code = SPLIT_PART(postal_code, '-', 1)
 WHERE postal_code LIKE '%-%'
   AND country <> 'Japan'; -- Updated record/row count 151 - 6 = 145
+
   
--- clean.orders_base table
---Cleaning/data validation process for orders_base table
-SELECT 
-	*
+-- clean.orders_base table data validation
+-- User level order details (Orders Table Sanity Checks)
+SELECT user_id, COUNT(num_of_item) AS order_count
+FROM clean.orders_base
+GROUP BY user_id
+ORDER BY order_count DESC
+
+-- Item count check
+SELECT *
 FROM 
-	clean.orders_base
-WHERE 
-	status NOT IN ('Shipped', 'Delivered','Processing','Cancelled','Complete','Returned')
+clean.orders_base
+WHERE num_of_item > 0
+
+-- order status
+SELECT DISTINCT status
+FROM clean.orders_base
+
+WHERE status IN ('Processing','Shipped','Complete','Returned','Cancelled')
+
+
+	 
 

@@ -28,6 +28,8 @@ The goal of this analysis is to support business decision-making for an e-commer
 
 **Note**: This is an ongoing project, and insights and dashboards will be expanded as the analysis progresses.
 
+**Analytical Considerations & Assumptions:**<br>
+During data validation, a **coverage limitation was identified** in the orders table where the gender attribute contained only a single category. To prevent biased conclusions, gender-based analysis was performed using the users dimension table, which provides complete gender representation and is properly related to orders via user_id. This limitation was documented and accounted for throughout the analysis.
 
 ###  🧱 Project Architecture (Medallion Style) ###
 

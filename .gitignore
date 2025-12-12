@@ -1,6 +1,3 @@
- # Ignore IDE-specific files
-    .idea/
-
  # Ignore build artifacts
     /build/
     *.log
