@@ -2,7 +2,7 @@
 SELECT 
 	* 
 FROM 
-	clean.orders_base 
+	clean.products_base 
 WHERE 
 	city IS NULL
 
@@ -129,11 +129,139 @@ clean.orders_base
 WHERE num_of_item > 0
 
 -- order status
-SELECT DISTINCT status
+SELECT status
 FROM clean.orders_base
+WHERE status NOT IN ('Processing','Shipped','Complete','Returned','Cancelled')
 
-WHERE status IN ('Processing','Shipped','Complete','Returned','Cancelled')
-
-
+-- Check for any orders where timestamps are inconsistent
+SELECT *
+FROM clean.orders_base
+WHERE created_at > shipped_at
+   OR shipped_at > delivered_at;
 	 
+-- Check for future dates
+SELECT order_id, created_at, shipped_at, delivered_at
+FROM clean.orders_base
+WHERE created_at > CURRENT_DATE
+   OR shipped_at > CURRENT_DATE
+   OR delivered_at > CURRENT_DATE
+   OR returned_at > CURRENT_DATE;
+
+-- Status vs timestamp logical checks (example: Processing orders should not have shipped/delivered)
+SELECT *
+FROM clean.orders_base
+WHERE 
+	(status = 'Processing' AND (shipped_at IS NOT NULL OR returned_at IS NOT NULL OR delivered_at IS NOT NULL)) OR
+	(status = 'Shipped' AND (returned_at IS NOT NULL OR delivered_at IS NOT NULL)) OR
+	(status = 'Complete' AND (returned_at IS NOT NULL)) OR
+	(status = 'Returned' AND (shipped_at IS NULL OR returned_at IS NULL OR delivered_at IS NULL)) OR
+	(status = 'Cancelled' AND (shipped_at IS NOT NULL OR returned_at IS NOT NULL OR delivered_at IS NOT NULL));
+
+	
+-- clean.products_base table data validation
+--Primary Key (product_id) validation checks 
+SELECT 
+	product_id
+FROM
+	clean.products_base
+GROUP BY product_id
+HAVING COUNT(*) > 1
+
+-- Cost and retails_price validation
+SELECT 
+	Product_id, cost, retail_price
+FROM clean.products_base
+WHERE cost <= 0 OR retail_price <= 0 OR retail_price < cost 
+
+--Department, brand and sku value check 
+SELECT DISTINCT department
+FROM clean.products_base
+ORDER BY department ASC
+
+SELECT brand, COUNT(*) 
+FROM clean.products_base
+GROUP BY brand
+ORDER BY brand ASC
+
+SELECT sku, COUNT(*)
+FROM clean.products_base
+GROUP BY sku
+HAVING COUNT(*) > 1
+
+-- NUll checks
+SELECT product_id, category, department, brand
+FROM clean.products_base
+WHERE (department IS NULL or lower(department) = 'null') OR
+	(category IS NULL or lower(category) = 'null') OR
+	(brand IS NULL or lower(brand) = 'null')
+
+-- Distribution Center detail check
+SELECT *
+FROM clean.products_base p
+WHERE distribution_center_id NOT IN (
+    SELECT id
+    FROM clean.distribution_centers_base
+)
+
+-- clean.distribution_centers_base table data validation
+SELECT * 
+FROM clean.distribution_centers_base
+
+-- clean.order_items_base table data validation
+-- Primary Key validation 
+SELECT id, COUNT(*)
+FROM clean.order_items_base
+GROUP BY id
+HAVING COUNT(*) > 1
+
+SELECT *
+FROM clean.order_items_base
+WHERE id IS NULL
+
+-- Duplicate Line Items check (Logical Check)
+SELECT order_id, product_id, COUNT(*)
+FROM clean.order_items_base
+GROUP BY 1, 2
+HAVING count(*) > 1
+
+SELECT user_id, order_id, COUNT(*) 
+FROM clean.order_items_base 
+GROUP BY 1, 2 
+HAVING COUNT(*) > 1
+
+-- Foreign Key Integrity
+SELECT *
+FROM clean.order_items_base oi
+LEFT JOIN clean.orders_base o
+  ON oi.order_id = o.order_id
+WHERE o.order_id IS NULL
+
+SELECT *
+FROM clean.order_items_base oi
+LEFT JOIN clean.products_base p
+  ON oi.product_id = p.product_id
+WHERE p.product_id IS NULL
+
+-- Sale price check
+SELECT *
+FROM clean.order_items_base
+WHERE sale_price < 0;
+
+-- Status vs timestamp logical checks (example: Processing orders should not have shipped/delivered)
+SELECT *
+FROM clean.order_items_base
+WHERE created_at > CURRENT_TIMESTAMP OR
+	shipped_at > CURRENT_TIMESTAMP OR
+	delivered_at > CURRENT_TIMESTAMP OR
+	returned_at > CURRENT_TIMESTAMP
+
+SELECT *
+FROM clean.order_items_base
+WHERE 
+	(status = 'Processing' AND (shipped_at IS NOT NULL OR returned_at IS NOT NULL OR delivered_at IS NOT NULL)) OR
+	(status = 'Shipped' AND (returned_at IS NOT NULL OR delivered_at IS NOT NULL)) OR
+	(status = 'Complete' AND (returned_at IS NOT NULL)) OR
+	(status = 'Returned' AND (shipped_at IS NULL OR returned_at IS NULL OR delivered_at IS NULL)) OR
+	(status = 'Cancelled' AND (shipped_at IS NOT NULL OR returned_at IS NOT NULL OR delivered_at IS NOT NULL));
+
 

@@ -104,4 +104,39 @@ User-level order counts were computed to validate completeness and consistency. 
     GROUP BY user_id
     ORDER BY order_count DESC
 
-The status column contains 5 distinct, valid values: 'Processing', 'Shipped', 'Complete', 'Returned', and 'Cancelled'. All order_ids are unique, and no null or abnormal values were detected. This confirms that the table is structurally clean and ready for analysis.
+**Status & integrity check**
+The status column contains 5 distinct, valid values:<br>
+'Processing', 'Shipped', 'Complete', 'Returned', and 'Cancelled'.<br> 
+
+All order_ids are unique, and no null or abnormal values were detected. This confirms that the table is structurally clean and ready for analysis.
+
+**Chronological / timestamp consistency** <br>
+All orders were verified to ensure created_at ≤ shipped_at ≤ delivered_at, and no future dates were present.<br>
+Status-based timestamp checks were also performed to validate logical consistency with the order lifecycle. No violations were observed.
+
+
+### **_3. clean.products_base_**
+## Overview
+The products_base table contains descriptive information for each product available in the e-commerce dataset. Each row represents a unique product identified by product_id. The table includes pricing, categorization, branding, and distribution details. It serves as a dimension table that provides context for sales, order, and margin analysis.
+
+**Department Coverage Validation**
+The products_base table contains only the Women department. No products from the Men department are present in the dataset. This is a source-level limitation and not a data quality error. Any analysis involving department-level comparisons should note this restriction. No null or unlabeled department values were found.
+
+All product_ids are unique. Cost and retail price values were validated; no negative or zero values exist, and retail price ≥ cost. Department contains only Women products. Distribution center IDs were cross-checked with the distribution table. Categories, brands, and SKUs were reviewed for missing or inconsistent values. No major data quality issues were found, and the table is ready for analysis.
+
+### **_4. clean.distribution_centers_base_**
+The distribution_centers table contains master data for **warehouse and fulfillment locations** used in the e-commerce operation. Each row represents a unique distribution center responsible for storing and shipping products.
+
+This is a dimension table with a **small, fixed number of records** (10 rows) and is used to link products and orders to their physical fulfillment locations.
+
+### **_5. clean.order_items_base_**
+
+The order_items table represents **line-level transaction data** for customer orders. Each row corresponds to a single product included in an order, making this table the **core fact table for sales and revenue analysis**.
+
+It links customer orders to individual products and enables detailed analysis at the product, order, and customer levels.
+
+**Data limitations:**
+Since no product-level repeat purchases exist, customer retention metrics are evaluated at the order or category level rather than SKU level.
+
+**Order Items Table Validation**<br>
+The order_items table was validated as a transactional fact table. Primary key uniqueness and foreign key relationships to orders and products were confirmed. Product duplication across orders is expected. Pricing and timestamp fields were reviewed for invalid or illogical values. No critical data quality issues were found.
