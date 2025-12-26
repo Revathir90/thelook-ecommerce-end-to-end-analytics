@@ -28,8 +28,15 @@ The goal of this analysis is to support business decision-making for an e-commer
 
 **Note**: This is an ongoing project, and insights and dashboards will be expanded as the analysis progresses.
 
-**Analytical Considerations & Assumptions:**<br>
-During data validation, a **coverage limitation was identified** in the orders table where the gender attribute contained only a single category. To prevent biased conclusions, gender-based analysis was performed using the users dimension table, which provides complete gender representation and is properly related to orders via user_id. This limitation was documented and accounted for throughout the analysis.
+**Analytical Considerations & Data Limitations**
+
+- The dataset contains only Women’s products; no Men’s department data is available.
+
+- Order records reflect purchases made by female users only, which limits gender-based comparative analysis.
+
+- No repeat purchases of the same product by the same user were observed; therefore, SKU-level repeat purchase analysis is not applicable.
+
+These constraints are inherent to the dataset and were considered when defining analysis scope and KPIs.
 
 ###  🧱 Project Architecture (Medallion Style) ###
 
@@ -42,6 +49,6 @@ During data validation, a **coverage limitation was identified** in the orders t
   - Deduplication 
   - Format corrections
 - **Gold Layer (Analytics-Ready)**
-  - Fact tables: fact_orders, fact_order_items, fact_inventory 
-  - Dimensions: dim_users, dim_products, dim_distribution_center 
+  - Fact table: fact_order_items 
+  - Dimensions: dim_users, dim_orders, dim_products, dim_distribution_center 
   - Enriched KPIs for dashboards

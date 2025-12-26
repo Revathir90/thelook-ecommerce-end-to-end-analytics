@@ -2,7 +2,7 @@
 SELECT 
 	* 
 FROM 
-	clean.products_base 
+	clean.users_base 
 WHERE 
 	city IS NULL
 
@@ -229,6 +229,12 @@ FROM clean.order_items_base
 GROUP BY 1, 2 
 HAVING COUNT(*) > 1
 
+SELECT product_id, COUNT(DISTINCT order_id)
+FROM order_items
+GROUP BY product_id
+HAVING COUNT(DISTINCT order_id) > 1;
+
+
 -- Foreign Key Integrity
 SELECT *
 FROM clean.order_items_base oi
@@ -265,3 +271,7 @@ WHERE
 	(status = 'Cancelled' AND (shipped_at IS NOT NULL OR returned_at IS NOT NULL OR delivered_at IS NOT NULL));
 
 
+SELECT product_id, COUNT(DISTINCT order_id)
+FROM order_items
+GROUP BY product_id
+HAVING COUNT(DISTINCT order_id) > 1;

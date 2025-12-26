@@ -1,4 +1,4 @@
---Creating a dimention tables and fact tables and adding PRIMARY KEY and FOREIGN KEY constrains for analysis 
+--Creating a fact & dimention tables and adding PRIMARY KEY and FOREIGN KEY constrains for analysis 
 
 --dim_users
 CREATE TABLE clean.dim_users AS
@@ -16,7 +16,9 @@ CREATE TABLE clean.dim_users AS
 		country,
 		latitude,
 		longitude,
-		created_at
+		traffic_source,
+		created_at,
+		user_geom
 	FROM 
 		clean.users_base
 
@@ -81,6 +83,7 @@ CREATE TABLE clean.fact_order_items AS
     	order_id,
    		user_id,
     	product_id,
+		inventory_item_id,
     	status,
     	created_at,
     	shipped_at,
@@ -89,3 +92,26 @@ CREATE TABLE clean.fact_order_items AS
     	sale_price
 	FROM 
 		clean.order_items_base
+
+ALTER TABLE clean.fact_order_items
+ADD CONSTRAINT pk_fact_order_itmes PRIMARY KEY (id)
+--Adding foreign key
+ALTER TABLE clean.fact_order_items
+ADD CONSTRAINT FK_fact_users FOREIGN KEY (user_id)
+REFERENCES clean.dim_users (user_id);
+
+SELECT *
+FROM clean.fact_order_items
+
+--Removing the data with no corresponding data in dim table
+DELETE FROM clean.fact_order_items
+WHERE user_id NOT IN (SELECT user_id FROM clean.dim_users);
+
+
+ALTER TABLE clean.fact_order_items
+ADD CONSTRAINT FK_fact_orders FOREIGN KEY (order_id)
+REFERENCES clean.dim_orders (order_id);
+
+ALTER TABLE clean.fact_order_items
+ADD CONSTRAINT FK_fact_products FOREIGN KEY (product_id)
+REFERENCES clean.dim_products (product_id);
