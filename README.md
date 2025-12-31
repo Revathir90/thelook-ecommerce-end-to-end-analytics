@@ -52,3 +52,19 @@ These constraints are inherent to the dataset and were considered when defining 
   - Fact table: fact_order_items 
   - Dimensions: dim_users, dim_orders, dim_products, dim_distribution_center 
   - Enriched KPIs for dashboards
+
+### 📊 Dashboard
+This project includes an interactive Tableau dashboard answering:<br>
+**Who are the top customers by revenue?**
+
+🔗 Tableau Public Link: [Top Customers by Revenue](https://public.tableau.com/views/Top10CustomersbyRevenue_17672030387250/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+
+**📌 Key visuals:**
+- Top 10 customers by total revenue
+- Revenue distribution by customer
+- Tooltip details: User_id, Revenue, Order Count, Product Count
+
+**🔍 Key Insights**
+- Majority of top customers placed only one order
+- High revenue is driven by bulk purchases, not repeat orders
+- Revenue concentration is skewed toward top customers

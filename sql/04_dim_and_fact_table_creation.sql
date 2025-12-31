@@ -107,7 +107,6 @@ FROM clean.fact_order_items
 DELETE FROM clean.fact_order_items
 WHERE user_id NOT IN (SELECT user_id FROM clean.dim_users);
 
-
 ALTER TABLE clean.fact_order_items
 ADD CONSTRAINT FK_fact_orders FOREIGN KEY (order_id)
 REFERENCES clean.dim_orders (order_id);

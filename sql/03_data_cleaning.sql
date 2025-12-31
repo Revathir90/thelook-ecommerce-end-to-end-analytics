@@ -248,6 +248,12 @@ LEFT JOIN clean.products_base p
   ON oi.product_id = p.product_id
 WHERE p.product_id IS NULL
 
+SELECT *
+FROM clean.order_items_base oi
+LEFT JOIN clean.users_base p
+  ON oi.user_id = p.user_id
+WHERE p.user_id IS NULL
+
 -- Sale price check
 SELECT *
 FROM clean.order_items_base
