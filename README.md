@@ -53,18 +53,29 @@ These constraints are inherent to the dataset and were considered when defining 
   - Dimensions: dim_users, dim_orders, dim_products, dim_distribution_center 
   - Enriched KPIs for dashboards
 
+## Analysis
+### 1. Customer Behavior & Retention Analysis
+
+### Objective
+Analyze customer purchasing behavior to understand retention patterns, revenue dependency, and customer value distribution.
+
 ### 📊 Dashboard
-This project includes an interactive Tableau dashboard answering:<br>
-**Who are the top customers by revenue?**
+🔗 **Tableau Dashboard**: [Customer Behavior and Retention Analysis](https://public.tableau.com/app/profile/revathi.ravichandran/viz/TheLookECommerceDashboard/Dashboard1)
 
-🔗 Tableau Public Link: [Top Customers by Revenue](https://public.tableau.com/views/Top10CustomersbyRevenue_17672030387250/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+### Key Insights
+- **Customer Retention**
+  - 90.7% of customers made only one purchase.
+  - Repeat customers represent only 9.3% of total customers.
 
-**📌 Key visuals:**
-- Top 10 customers by total revenue
-- Revenue distribution by customer
-- Tooltip details: User_id, Revenue, Order Count, Product Count
+- **Revenue Contribution**
+  - One-time customers contribute approximately 80% of total revenue.
+  - Repeat customers contribute 20%, indicating higher value per returning customer.
 
-**🔍 Key Insights**
-- Majority of top customers placed only one order
-- High revenue is driven by bulk purchases, not repeat orders
-- Revenue concentration is skewed toward top customers
+- **Revenue Concentration**
+  - Top 10 customers generate 45.5% of total revenue, showing dependency on a small customer segment.
+
+### Business Recommendations
+- Implement **retention strategies** such as **loyalty programs** and personalized engagement campaigns.
+- Protect **high-value customers** through **targeted promotions and VIP experiences**.
+- Encourage **repeat purchasing** through **bundled offers and reorder incentives**.
+- Reduce revenue risk by **expanding repeat customer base**.
